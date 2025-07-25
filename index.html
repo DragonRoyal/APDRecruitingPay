@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Austin Police Department - Salary Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 40px;
+            padding: 40px;
+        }
+
+        .calculator-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            margin-bottom: 25px;
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .incentive-group {
+            margin-bottom: 30px;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .group-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #34495e;
+            margin-bottom: 15px;
+        }
+
+        .incentive-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .incentive-item:last-child {
+            border-bottom: none;
+        }
+
+        .incentive-label {
+            flex: 1;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .incentive-amount {
+            color: #27ae60;
+            font-weight: 600;
+            margin-right: 15px;
+            min-width: 80px;
+            text-align: right;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 24px;
+            background: #bdc3c7;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: #3498db;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .toggle-switch.active::after {
+            left: 28px;
+        }
+
+        .salary-display {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            border-radius: 15px;
+            padding: 30px;
+            color: white;
+            text-align: center;
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+        }
+
+        .salary-title {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .base-salary {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .total-salary {
+            font-size: 3rem;
+            font-weight: 300;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .annual-label {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-bottom: 30px;
+        }
+
+        .breakdown {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: left;
+        }
+
+        .breakdown-title {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .breakdown-item:last-child {
+            border-bottom: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-top: 10px;
+            padding-top: 15px;
+            border-top: 2px solid rgba(255,255,255,0.3);
+        }
+
+        select {
+            background: white;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            padding: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .total-salary {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Austin Police Department</h1>
+            <p>Interactive Salary Calculator - Discover Your Total Compensation Package</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="calculator-section">
+                <h2 class="section-title">Select Your Qualifications & Incentives</h2>
+                
+                <div class="incentive-group">
+                    <div class="group-title">Experience/Service Level</div>
+                    <div class="incentive-item">
+                        <span class="incentive-label">Service Level</span>
+                        <select id="experience" onchange="updateSalary()">
+                            <option value="cadet">Academy Cadet</option>
+                            <option value="graduation" selected>At Graduation</option>
+                            <option value="year1">1 Year Anniversary</option>
+                            <option value="year2">2 Year Anniversary</option>
+                            <option value="year6">6 Year Anniversary</option>
+                            <option value="year10">10 Year Anniversary</option>
+                            <option value="year14">14 Year Anniversary</option>
+                            <option value="year16">16 Year Anniversary</option>
+                            <option value="year23">Top Step (23+ Years)</option>
+                        </select>
+                    </div>
+                    <div class="incentive-item">
+                        <span class="incentive-label">Years of Service (for longevity pay)</span>
+                        <select id="longevity" onchange="updateLongevity()">
+                            <option value="0">0 years</option>
+                            <option value="1">1 year</option>
+                            <option value="2">2 years</option>
+                            <option value="3">3 years</option>
+                            <option value="4">4 years</option>
+                            <option value="5">5 years</option>
+                            <option value="6">6 years</option>
+                            <option value="7">7 years</option>
+                            <option value="8">8 years</option>
+                            <option value="9">9 years</option>
+                            <option value="10">10 years</option>
+                            <option value="11">11 years</option>
+                            <option value="12">12 years</option>
+                            <option value="13">13 years</option>
+                            <option value="14">14 years</option>
+                            <option value="15">15 years</option>
+                            <option value="16">16 years</option>
+                            <option value="17">17 years</option>
+                            <option value="18">18 years</option>
+                            <option value="19">19 years</option>
+                            <option value="20">20 years</option>
+                            <option value="21">21 years</option>
+                            <option value="22">22 years</option>
+                            <option value="23">23 years</option>
+                            <option value="24">24 years</option>
+                            <option value="25">25+ years (max)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="incentive-group">
+                    <div class="group-title">Education Incentives</div>
+                    <div class="incentive-item">
+                        <span class="incentive-label">Associate's Degree (or 60+ college hours)</span>
+                        <span class="incentive-amount">+$1,200/yr</span>
+                        <div class="toggle-switch" onclick="toggleIncentive('associates', 1200, this)"></div>
+                    </div>
+                    <div class="incentive-item">
+                        <span class="incentive-label">Bachelor's Degree</span>
+                        <span class="incentive-amount">+$2,640/yr</span>
+                        <div class="toggle-switch" onclick="toggleIncentive('bachelor', 2640, this)"></div>
+                    </div>
+                    <div class="incentive-item">
+                        <span class="incentive-label">Master's Degree</span>
+                        <span class="incentive-amount">+$3,600/yr</span>
+                        <div class="toggle-switch" onclick="toggleIncentive('masters', 3600, this)"></div>
+                    </div>
+                </div>
+
+                <div class="incentive-group">
+                    <div class="group-title">Language & Communication Skills</div>
+                    <div class="incentive-item">
+                        <span class="incentive-label">Bilingual Pay (Spanish/Other Languages)</span>
+                        <span class="incentive-amount">+$2,400/yr</span>
+                        <div class="toggle-switch" onclick="toggleIncentive('bilingual', 2400, this)"></div>
+                    </div>
+                    <div class="incentive-item">
+                        <span class="incentive-label">American Sign Language (ASL)</span>
+                        <span class="incentive-amount">+$2,400/yr</span>
+                        <div class="toggle-switch" onclick="toggleIncentive('asl', 2400, this)"></div>
+                    </div>
+                </div>
+
+                <div class="incentive-group">
+                    <div class="group-title">Training & Certifications</div>
+                    <div class="incentive-item">
+                        <span class="incentive-label">Field Training Officer (FTO)</span>
+                        <span class="incentive-amount">+$4,507/yr</span>
+                        <div class="toggle-switch" onclick="toggleIncentive('fto', 4507, this)"></div>
+                    </div>
+                    <div class="incentive-item">
+                        <span class="incentive-label">TCOLE Master Peace Officer Certificate</span>
+                        <span class="incentive-amount">+$1,800/yr</span>
+                        <div class="toggle-switch" onclick="toggleIncentive('tcole', 1800, this)"></div>
+                    </div>
+                </div>
+
+                <div class="incentive-group">
+                    <div class="group-title">Shift Differential</div>
+                    <div class="incentive-item">
+                        <span class="incentive-label">Evening/Night Shift Differential</span>
+                        <span class="incentive-amount">+$3,600-4,200/yr</span>
+                        <div class="toggle-switch" onclick="toggleIncentive('shiftdiff', 3900, this)"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="salary-display">
+                <div class="salary-title">Your Estimated Annual Salary</div>
+                <div class="base-salary">Base: $<span id="baseSalary">70,644</span></div>
+                <div class="total-salary">$<span id="totalSalary">70,644</span></div>
+                <div class="annual-label">per year</div>
+                
+                <div class="breakdown">
+                    <div class="breakdown-title">Monthly Breakdown</div>
+                    <div class="breakdown-item">
+                        <span>Base Monthly:</span>
+                        <span>$<span id="baseMonthly">5,887</span></span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span>Incentives:</span>
+                        <span>+$<span id="incentiveMonthly">0</span></span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span>Total Monthly:</span>
+                        <span>$<span id="totalMonthly">5,887</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const salaryData = {
+            base: {
+                cadet: 60000,
+                graduation: 70644,
+                year1: 79277,
+                year2: 87498,
+                year6: 93623,
+                year10: 100176,
+                year14: 107188,
+                year16: 114692,
+                year23: 118132
+            },
+            incentives: {},
+            longevityYears: 0
+        };
+
+        function updateSalary() {
+            const experience = document.getElementById('experience').value;
+            const baseSalary = salaryData.base[experience];
+            
+            let totalIncentives = 0;
+            for (const incentive in salaryData.incentives) {
+                totalIncentives += salaryData.incentives[incentive];
+            }
+            
+            // Add longevity pay
+            const longevityPay = salaryData.longevityYears * 107;
+            totalIncentives += longevityPay;
+            
+            const totalAnnualSalary = baseSalary + totalIncentives;
+            const baseMonthly = Math.round(baseSalary / 12);
+            const totalMonthly = Math.round(totalAnnualSalary / 12);
+            const incentiveMonthly = Math.round(totalIncentives / 12);
+            
+            document.getElementById('baseSalary').textContent = baseSalary.toLocaleString();
+            document.getElementById('totalSalary').textContent = totalAnnualSalary.toLocaleString();
+            document.getElementById('baseMonthly').textContent = baseMonthly.toLocaleString();
+            document.getElementById('incentiveMonthly').textContent = incentiveMonthly.toLocaleString();
+            document.getElementById('totalMonthly').textContent = totalMonthly.toLocaleString();
+        }
+
+        function updateLongevity() {
+            const years = parseInt(document.getElementById('longevity').value);
+            salaryData.longevityYears = Math.min(years, 25); // Cap at 25 years
+            updateSalary();
+        }
+
+        function toggleIncentive(incentiveKey, amount, element) {
+            if (element.classList.contains('active')) {
+                element.classList.remove('active');
+                delete salaryData.incentives[incentiveKey];
+            } else {
+                element.classList.add('active');
+                salaryData.incentives[incentiveKey] = amount;
+            }
+            updateSalary();
+        }
+
+        // Initialize the calculator
+        updateSalary();
+    </script>
+</body>
+</html>
