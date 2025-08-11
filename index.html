@@ -139,14 +139,27 @@
         }
 
         .salary-display {
-            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+        }
+
+        .salary-card {
             border-radius: 15px;
             padding: 30px;
             color: white;
             text-align: center;
-            position: sticky;
-            top: 20px;
-            height: fit-content;
+        }
+
+        .gross-salary {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+        }
+
+        .net-salary {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
         }
 
         .salary-title {
@@ -200,6 +213,11 @@
             margin-top: 10px;
             padding-top: 15px;
             border-top: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .deduction-item {
+            color: #ffcccb;
+            font-size: 0.9rem;
         }
 
         select {
@@ -352,24 +370,52 @@
             </div>
 
             <div class="salary-display">
-                <div class="salary-title">Your Estimated Annual Salary</div>
-                <div class="base-salary">Base: $<span id="baseSalary">70,644</span></div>
-                <div class="total-salary">$<span id="totalSalary">70,644</span></div>
-                <div class="annual-label">per year</div>
-                
-                <div class="breakdown">
-                    <div class="breakdown-title">Monthly Breakdown</div>
-                    <div class="breakdown-item">
-                        <span>Base Monthly:</span>
-                        <span>$<span id="baseMonthly">5,887</span></span>
+                <div class="salary-card gross-salary">
+                    <div class="salary-title">Gross Annual Salary</div>
+                    <div class="base-salary">Base: $<span id="baseSalary">70,644</span></div>
+                    <div class="total-salary">$<span id="totalSalary">70,644</span></div>
+                    <div class="annual-label">per year (before deductions)</div>
+                    
+                    <div class="breakdown">
+                        <div class="breakdown-title">Monthly Breakdown</div>
+                        <div class="breakdown-item">
+                            <span>Base Monthly:</span>
+                            <span>$<span id="baseMonthly">5,887</span></span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Incentives:</span>
+                            <span>+$<span id="incentiveMonthly">0</span></span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Gross Monthly:</span>
+                            <span>$<span id="totalMonthly">5,887</span></span>
+                        </div>
                     </div>
-                    <div class="breakdown-item">
-                        <span>Incentives:</span>
-                        <span>+$<span id="incentiveMonthly">0</span></span>
-                    </div>
-                    <div class="breakdown-item">
-                        <span>Total Monthly:</span>
-                        <span>$<span id="totalMonthly">5,887</span></span>
+                </div>
+
+                <div class="salary-card net-salary">
+                    <div class="salary-title">Net Take-Home Pay</div>
+                    <div class="total-salary">$<span id="netSalary">54,995</span></div>
+                    <div class="annual-label">per year (after deductions)</div>
+                    
+                    <div class="breakdown">
+                        <div class="breakdown-title">Deductions Breakdown</div>
+                        <div class="breakdown-item deduction-item">
+                            <span>Retirement & FICA (15%):</span>
+                            <span>-$<span id="retirementFica">10,597</span></span>
+                        </div>
+                        <div class="breakdown-item deduction-item">
+                            <span>Healthcare (7.25%):</span>
+                            <span>-$<span id="healthcare">5,122</span></span>
+                        </div>
+                        <div class="breakdown-item deduction-item">
+                            <span>Total Deductions:</span>
+                            <span>-$<span id="totalDeductions">15,719</span></span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Net Monthly:</span>
+                            <span>$<span id="netMonthly">4,583</span></span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -411,11 +457,26 @@
             const totalMonthly = Math.round(totalAnnualSalary / 12);
             const incentiveMonthly = Math.round(totalIncentives / 12);
             
+            // Calculate deductions
+            const retirementFicaDeduction = Math.round(totalAnnualSalary * 0.15);
+            const healthcareDeduction = Math.round(totalAnnualSalary * 0.0725);
+            const totalDeductions = retirementFicaDeduction + healthcareDeduction;
+            const netAnnualSalary = totalAnnualSalary - totalDeductions;
+            const netMonthly = Math.round(netAnnualSalary / 12);
+            
+            // Update gross salary display
             document.getElementById('baseSalary').textContent = baseSalary.toLocaleString();
             document.getElementById('totalSalary').textContent = totalAnnualSalary.toLocaleString();
             document.getElementById('baseMonthly').textContent = baseMonthly.toLocaleString();
             document.getElementById('incentiveMonthly').textContent = incentiveMonthly.toLocaleString();
             document.getElementById('totalMonthly').textContent = totalMonthly.toLocaleString();
+            
+            // Update net salary display
+            document.getElementById('netSalary').textContent = netAnnualSalary.toLocaleString();
+            document.getElementById('retirementFica').textContent = retirementFicaDeduction.toLocaleString();
+            document.getElementById('healthcare').textContent = healthcareDeduction.toLocaleString();
+            document.getElementById('totalDeductions').textContent = totalDeductions.toLocaleString();
+            document.getElementById('netMonthly').textContent = netMonthly.toLocaleString();
         }
 
         function updateLongevity() {
